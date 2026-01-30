@@ -52,6 +52,29 @@ function App() {
   const [showMenu, setShowMenu] = useState(false);
   const [randomQuote, setRandomQuote] = useState('');
 
+  // Theme (dark / light)
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute('data-theme', saved);
+    } else {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = prefersDark ? 'dark' : 'light';
+      setTheme(initial);
+      document.documentElement.setAttribute('data-theme', initial);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
   // Update time and set random quote
   useEffect(() => {
     const motivationalQuotes = [
@@ -268,6 +291,16 @@ function App() {
             >
               ☰
             </button>
+
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+
             {showMenu && (
               <div className="priority-menu">
                 <h4>Filter by Priority</h4>
